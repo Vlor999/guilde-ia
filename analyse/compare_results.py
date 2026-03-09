@@ -60,6 +60,7 @@ def compare_data(all_data):
 
     colors = {"mlx": "#007AFF", "torch": "#FF3B30"}
     markers = {"mlx": "o", "torch": "s"}
+    coefs = {}
 
     for label, data_list in all_data.items():
         valid_data = [d for d in data_list if d]
@@ -77,6 +78,44 @@ def compare_data(all_data):
             linewidth=2,
             markersize=8,
         )
+
+        # Calculate affine approximation (linear regression) without numpy
+        if len(epochs) > 1:
+            n = len(epochs)
+            sum_x = sum(epochs)
+            sum_y = sum(times)
+            sum_xy = sum(x * y for x, y in zip(epochs, times))
+            sum_x2 = sum(x**2 for x in epochs)
+
+            denominator = n * sum_x2 - sum_x**2
+            if denominator != 0:
+                a = (n * sum_xy - sum_x * sum_y) / denominator
+                b = (sum_y - a * sum_x) / n
+
+                print(
+                    f"[{label.upper()}] Affine function coefficients: a = {a:.4f}, b = {b:.4f}"
+                )
+                coefs[label.upper()] = {"a": a, "b": b}
+
+                affine_times = [a * x + b for x in epochs]
+                plt.plot(
+                    epochs,
+                    affine_times,
+                    label=f"{label.upper()} (Fit: {a:.2f}x + {b:.2f})",
+                    color=colors.get(label.lower(), None),
+                    linestyle="--",
+                    linewidth=2,
+                    alpha=0.7,
+                )
+
+    # print all the rapport of coef compare to mlx
+    if len(coefs) > 1:
+        print("Comparaisons : ")
+        for label, coef in coefs.items():
+            if label != "MLX":
+                print(
+                    f"• [{label}] Rapport of coef compare to MLX: a = {coef['a'] / coefs['MLX']['a']:.4f}"
+            )
 
     plt.title(
         "Training Performance Comparison: MLX vs PyTorch",
