@@ -12,6 +12,13 @@ avec MLX et PyTorch (exemples de génération, évaluation et entraînement).
 	```bash
 	uv run mlx_lm.chat --model mlx-community/gpt-oss-20b-MXFP4-Q8 --max-tokens=4096
 	```
+	Pour convertir un modèle sous le format MLX (+ quantisé)
+	```bash
+	uv run mlx_lm.convert \
+	--convert openai/gpt-oss-20b \ 
+	-q \ 
+	--upload-repo <your-repo-name>/gpt-oss-20b-4bit
+	```
 
 **Différences importantes**
 - MLX cible des modèles quantifiés et des accélérateurs spécifiques (meilleure
@@ -32,5 +39,5 @@ avec MLX et PyTorch (exemples de génération, évaluation et entraînement).
 - Générer avec MLX et PYTORCH pour comparer les résultats :
 
 ```bash
-uv run python main.py --mode=generate
+uv run python main.py --mode=generate --model=mlx
 ```
