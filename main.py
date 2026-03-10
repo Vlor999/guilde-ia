@@ -3,8 +3,8 @@ from train.mlx_training import train as train_mlx
 from train.pytorch_training import train as train_pytorch
 from evaluate.mlx_eval import evaluate as evaluate_mlx 
 from evaluate.pytorch_eval import evaluate as evaluate_pytorch
-from generate.mlx_generate import generate_response as generate_mlx
-from generate.pytorch_generate import generate_response as generate_torch
+
+from generate.generate_eval import compare
 
 def parse_args():
     parser = ArgumentParser()
@@ -49,12 +49,7 @@ def main():
         else:
             evaluate_pytorch()
     elif args.mode == "generate":
-        model_mlx = ""
-        model_torch = ""
-        prompt = "Explique-moi la fusion nucléaire en 3 paragraphes."
-        max_tokens = 1000
-        generate_mlx(model_mlx, prompt, max_tokens)
-        generate_torch(model_torch,prompt, max_tokens)
+        compare()
 
 
 if __name__ == "__main__":

@@ -3,11 +3,11 @@ import time
 from mlx_lm import load, generate
 
 def load_model(model_name: str):
-    print(f"Chargement de MLX ({model_id})...")
+    print(f"Chargement de MLX ({model_name})...")
     model, tokenizer = load(model_name)
     return model, tokenizer
 
-def calcul_stats(tok, response: str, duration : float) -> None:
+def calcul_stats(tok, response: str, duration : float) -> tuple[int, float]:
     tokens = tok.encode(response)
     generated_tokens = len(tokens)
     tps = generated_tokens / duration
@@ -16,9 +16,10 @@ def calcul_stats(tok, response: str, duration : float) -> None:
     print(f"Temps total : {duration:.2f} s")
     print(f"Tokens générés : {generated_tokens}")
     print(f"Vitesse : {tps:.2f} tokens/s")
-    print(response)
 
-def generate_response(model_name: str, prompt: str, max_tokens: int) -> None:
+    return generated_tokens, tps
+
+def generate_response(model_name: str, prompt: str, max_tokens: int) -> tuple[int, float]:
     model, tokenizer = load_model(model_name=model_name)
     print("Génération en cours avec MLX...")
     start_time = time.perf_counter()
@@ -33,7 +34,7 @@ def generate_response(model_name: str, prompt: str, max_tokens: int) -> None:
 
     end_time = time.perf_counter()
     duration = end_time - start_time
-    calcul_stats(tokenizer, response, duration)
+    return calcul_stats(tokenizer, response, duration)
     
 
 if __name__ == "__main__":
